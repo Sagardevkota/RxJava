@@ -28,4 +28,40 @@ public class concurrencyAndSchedulers{
         
 
         Thread.sleep(3000);
+        
+        //flowables can handle backpressure(sometimes the observable emits the value that is excessive for observer)
+          Flowable.range(0,50000000)
+                .doOnNext(s->System.out.println("emission number "+s))
+                .subscribeOn(Schedulers.computation())
+                .subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request(Long.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        Thread.sleep(10000);
+        
+        
+        
+        
 }
