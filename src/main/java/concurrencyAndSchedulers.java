@@ -62,6 +62,27 @@ public class concurrencyAndSchedulers{
         Thread.sleep(10000);
         
         
+        //backpressure strategies
         
+          //in create factory since we implement on next on our own...it doesnt have internal backpressure so we have to define strategy ourselves
+       //strategies are
+        // buffer-it caches the emission that cant be handled right away,
+        // drop-drops emission,
+        // error-when subscriber cant keeup up with flowable it throws error,
+        // latest-it takes last emission and caches unless the subscriber is ready
+        //missing-it doesnt implement any backpressure it means we will use backpressure operator ourselves
+        Flowable<String> source1=Flowable.create(source->{
+            source.onNext("black");
+            source.onNext("white");
+        }
+        ,BackpressureStrategy.ERROR
+
+        );
+        
+        //back pressure operators
+        Flowable<Long> source1=Flowable.interval(1,TimeUnit.SECONDS);
+        source1.onBackpressureBuffer(10,()->System.out.println("Overflow"),BackpressureOverflowStrategy.DROP_LATEST);
+        source1.onBackpressureLatest();
+     
         
 }
