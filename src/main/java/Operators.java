@@ -141,4 +141,54 @@ public class Operators {
                 .doOnComplete(()->System.out.println("You are almost there"))
                 .retry(2)
                 .subscribe(System.out::println);
+     
+    //map only emits single observable
+        //flatmap receives observable and emits multiple observable
+        //it takes each emission and apply the function and return observalbe to which we subscribe
+     Observable<String> source1=Observable.just("alpha","gama","meta","beta","zeta");  
+     source1.flatMap(s->Observable.fromArray(s.split("")))
+                .subscribe(System.out::println);
+    
+       //concat guarantees the order of merge of observables(megeWith doesnt)
+        Observable<String> source1=Observable.just("alpha","gama","meta");
+        Observable<String> source2=Observable.just("beta","zeta");
+        source1.concatWith(source2)
+                .subscribe(System.out::println);
+    
+     //ambArray only runs the observable that is faster than others in this case i.e source2
+        Observable<Long> source1=Observable.interval(1, TimeUnit.SECONDS);
+        Observable<Long> source2=Observable.interval(300,TimeUnit.MILLISECONDS);
+        Observable.ambArray(source1,source2)
+                .subscribe(System.out::println);
+        Thread.sleep(5000);
+    
+     //zip takes upto 9 item and above that we have to use ziparray and final argument is zipper,a fuction that can organize observables acc to our wish
+        Observable<String> source1=Observable.just("apple","ball");
+        Observable<String> source2=Observable.just("cow","dog");
+        Observable.zip(source1,source2,(e1,e2)->e1+"-"+e2)
+        .subscribe(System.out::println);
+    
+      //combinelatest combines latest obs value
+        Observable<Long> source1=Observable.interval(1,TimeUnit.SECONDS);
+        Observable<Long> source2=Observable.interval(300,TimeUnit.MILLISECONDS);
+        Observable.combineLatest(source1,source2,(e1,e2)->"source1: "+e1+"-"+" source 2:"+e2)
+        .subscribe(System.out::println);
+        Thread.sleep(5000);
+    
+       //only one value which is latest value form source 2 is combined
+        Observable<Long> source1=Observable.interval(1,TimeUnit.SECONDS);
+        Observable<Long> source2=Observable.interval(300,TimeUnit.MILLISECONDS);
+        source1.withLatestFrom(source2,(e1,e2)->"source1: "+e1+"-"+" source 2:"+e2)
+        .subscribe(System.out::println);
+        Thread.sleep(5000);
+    
+      //group by
+        Observable<String> source1=Observable.just("blue","white","yellow");
+        Observable<GroupedObservable<Character,String>> groups=source1.groupBy(s->s.charAt(0));
+        groups.flatMapSingle(g->g.reduce("",(x,y)->x.equals("")?y:x+","+y).map(s->g.getKey()+":"+s))
+        .subscribe(System.out::println);
+
+
+
+
 }
