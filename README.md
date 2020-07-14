@@ -1,4 +1,4 @@
-# <h1 "color"="red">EVERYTHING YOU NEED TO KNOW ABOUT RX JAVA </h1>
+# EVERYTHING YOU NEED TO KNOW ABOUT RX JAVA 
 
 * Factories to create different kinds of observable datasources <br>
 * Shcedulers available on rxJava to work on different kinds of thread <br>
